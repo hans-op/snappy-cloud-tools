@@ -57,7 +57,7 @@ else:
     xrange = range
 
 
-SNAPPY_EC2_VERSION = "0.7"
+SNAPPY_EC2_VERSION = "0.8"
 SNAPPY_EC2_DIR = os.path.dirname(os.path.realpath(__file__))
 SNAPPY_AWS_CONF_DIR = SNAPPY_EC2_DIR + "/deploy/home/ec2-user/snappydata"
 SNAPPYDATA_UI_PORT = ""
@@ -194,9 +194,9 @@ def parse_args():
     parser.add_option(
         "-a", "--ami",
         help="Amazon Machine Image ID to use")
-    parser.add_option(
-        "-v", "--snappydata-version", default=DEFAULT_SNAPPY_VERSION,
-        help="Version of SnappyData to use: 'X.Y.Z' (default: %default)")
+#    parser.add_option(
+#        "-v", "--snappydata-version", default=DEFAULT_SNAPPY_VERSION,
+#        help="Version of SnappyData to use: 'X.Y.Z' (default: %default)")
     parser.add_option(
         "--with-zeppelin", default=None,
         help="Launch Apache Zeppelin server with the cluster." + 
@@ -305,9 +305,9 @@ def parse_args():
                           file=stderr)
                     sys.exit(1)
 
-    if opts.with_zeppelin is not None:
-        print("Option --with-zeppelin specified. The latest SnappyData version will be used.")
-        opts.snappydata_version = "LATEST"
+   # if opts.with_zeppelin is not None:
+    #    print("Option --with-zeppelin specified. The latest SnappyData version will be used.")
+       # opts.snappydata_version = "LATEST"
 
     return (opts, action, cluster_name)
 
@@ -505,7 +505,7 @@ def launch_cluster(conn, opts, cluster_name):
         # SnappyData netserver uses this port to listen to clients by default
         locator_group.authorize('tcp', 1527, 1527, authorized_address)
         # Port used by Pulse UI
-        locator_group.authorize('tcp', 7070, 7070, authorized_address)
+        #locator_group.authorize('tcp', 7070, 7070, authorized_address)
         # JMX manager port
         locator_group.authorize('tcp', 1099, 1099, authorized_address)
         # Default locator port for peer discovery
@@ -553,7 +553,8 @@ def launch_cluster(conn, opts, cluster_name):
         lead_group.authorize('tcp', 50030, 50030, authorized_address)
         lead_group.authorize('tcp', 50070, 50070, authorized_address)
         lead_group.authorize('tcp', 60070, 60070, authorized_address)
-        lead_group.authorize('tcp', 4040, 4045, authorized_address)
+        lead_group.authorize('tcp', 4040, 4040, authorized_address)
+        lead_group.authorize('tcp', 5050, 5050, authorized_address)
         # HDFS NFS gateway requires 111,2049,4242 for tcp & udp
         lead_group.authorize('tcp', 111, 111, authorized_address)
         lead_group.authorize('udp', 111, 111, authorized_address)
@@ -1271,7 +1272,7 @@ def deploy_files(conn, root_dir, opts, locator_nodes, lead_nodes, server_nodes, 
                                 text = text.replace("{{LEAD_" + str(idx) + "}}", lead_addresses[idx])
                             for idx in range(len(server_nodes)):
                                 text = text.replace("{{SERVER_" + str(idx) + "}}", server_addresses[idx])
-                            text = text.replace("{{snappydata_version}}", opts.snappydata_version)
+#                            text = text.replace("{{snappydata_version}}", opts.snappydata_version)
                             text = text.replace("{{EMBEDDED}}", zp_mode)
                             dest.write(text)
                             dest.close()
@@ -1518,7 +1519,7 @@ def real_main():
         setup_cluster(conn, locator_nodes, lead_nodes, server_nodes, zeppelin_nodes, opts, True)
         lead = get_dns_name(lead_nodes[0], opts.private_ips)
         if SNAPPYDATA_UI_PORT == "":
-            SNAPPYDATA_UI_PORT = '4040'
+            SNAPPYDATA_UI_PORT = '5050'
         url = "http://%s:%s" % (lead, SNAPPYDATA_UI_PORT)
         print("SnappyData Unified cluster started.")
         print("  Access Apache Spark UI and SnappyData Dashboard at %s" % url)
