@@ -17,7 +17,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Update the urls for various artifacts and scripts.
-printf "https://github.com/SnappyDataInc/snappydata/releases/download/v0.7/snappydata-0.7-bin.tar.gz" > snappydata-url.txt
+printf "https://github.com/SnappyDataInc/snappydata/releases/download/v0.8/snappydata-0.8-bin.tar.gz" > snappydata-url.txt
 printf "https://github.com/SnappyDataInc/zeppelin-interpreter/releases/download/v0.6.1/snappydata-zeppelin-0.6.1.jar" > interpreter-url.txt
 printf "https://s3-us-west-2.amazonaws.com/zeppelindemo/quickstart/notebook.tar.gz" > notebook-url.txt
 printf "https://github.com/SnappyDataInc/snappy-cloud-tools/raw/master/aws/cloudformation/scripts/quickstart/setup.sh" > cf-script-url.txt
