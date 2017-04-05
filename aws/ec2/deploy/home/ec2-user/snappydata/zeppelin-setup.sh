@@ -163,7 +163,7 @@ if [[ -e "${ZEP_DIR}/conf/interpreter.json" ]]; then
     LEAD_HOST=`cat lead_list | sed -n '1p'`
   fi
   sed -i "/group\": \"snappydata\"/,/isExistingProcess\": false/{s/isExistingProcess\": false/isExistingProcess\": snappydatainc_marker/}" "${ZEP_DIR}/conf/interpreter.json"
-  sed -i "/snappydatainc_marker/a \"host\": \"${LEAD_HOST}\",\n \"port\": \"3768\"," "${ZEP_DIR}/conf/interpreter.json"
+  sed -i "/snappydatainc_marker/a \"host\": \"${LEAD_HOST}\",\n \"port\": \"${LEAD_PORT}\"," "${ZEP_DIR}/conf/interpreter.json"
   sed -i "s/snappydatainc_marker/true/" "${ZEP_DIR}/conf/interpreter.json"
 fi
 

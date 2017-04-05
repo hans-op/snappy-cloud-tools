@@ -65,4 +65,5 @@ else
     SNAPPY_HOME_DIR=${SNAPPY_HOME_DIR_NO_BIN}
   fi
 fi
+
 echo -e "export SNAPPY_HOME_DIR=${SNAPPY_HOME_DIR}" >> ec2-variables.sh
