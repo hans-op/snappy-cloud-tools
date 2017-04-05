@@ -305,9 +305,9 @@ def parse_args():
                           file=stderr)
                     sys.exit(1)
 
-   # if opts.with_zeppelin is not None:
-    #    print("Option --with-zeppelin specified. The latest SnappyData version will be used.")
-       # opts.snappydata_version = "LATEST"
+    if opts.with_zeppelin is not None:
+       print("Option --with-zeppelin specified. The latest SnappyData version will be used.")
+       opts.snappydata_version = "LATEST"
 
     return (opts, action, cluster_name)
 
@@ -504,8 +504,6 @@ def launch_cluster(conn, opts, cluster_name):
         locator_group.authorize('tcp', 8088, 8088, authorized_address)
         # SnappyData netserver uses this port to listen to clients by default
         locator_group.authorize('tcp', 1527, 1527, authorized_address)
-        # Port used by Pulse UI
-        #locator_group.authorize('tcp', 7070, 7070, authorized_address)
         # JMX manager port
         locator_group.authorize('tcp', 1099, 1099, authorized_address)
         # Default locator port for peer discovery
@@ -1272,7 +1270,7 @@ def deploy_files(conn, root_dir, opts, locator_nodes, lead_nodes, server_nodes, 
                                 text = text.replace("{{LEAD_" + str(idx) + "}}", lead_addresses[idx])
                             for idx in range(len(server_nodes)):
                                 text = text.replace("{{SERVER_" + str(idx) + "}}", server_addresses[idx])
-#                            text = text.replace("{{snappydata_version}}", opts.snappydata_version)
+                            text = text.replace("{{snappydata_version}}", "LATEST")
                             text = text.replace("{{EMBEDDED}}", zp_mode)
                             dest.write(text)
                             dest.close()

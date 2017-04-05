@@ -23,8 +23,6 @@ source ec2-variables.sh
 sudo yum -y -q remove  jre-1.7.0-openjdk
 sudo yum -y -q install java-1.8.0-openjdk-devel
 
-sh resolve-hostname.sh
-
 # Download and extract the appropriate distribution.
 sh fetch-distribution.sh
 
@@ -89,30 +87,24 @@ echo "$OTHER_LOCATORS" > other-locators
 
 # Copy this extracted directory to all the other instances
 sh copy-dir.sh "${SNAPPY_HOME_DIR}"  other-locators
-sh copy-dir.sh resolve-hostname.sh  other-locators
 
 sh copy-dir.sh "${SNAPPY_HOME_DIR}"  lead_list
-sh copy-dir.sh resolve-hostname.sh  lead_list
 
 sh copy-dir.sh "${SNAPPY_HOME_DIR}"  server_list
-sh copy-dir.sh resolve-hostname.sh  server_list
 
 DIR=`readlink -f resolve-hostname.sh`
 DIR=`echo "$DIR"|sed 's@/$@@'`
 DIR=`dirname "$DIR"`
 
 for node in ${OTHER_LOCATORS}; do
-    ssh "$node" "sh ${DIR}/resolve-hostname.sh"
     ssh "$node" "sudo yum -y -q remove jre-1.7.0-openjdk"
     ssh "$node" "sudo yum -y -q install java-1.8.0-openjdk-devel"
 done
 for node in ${LEADS}; do
-    ssh "$node" "sh ${DIR}/resolve-hostname.sh"
     ssh "$node" "sudo yum -y -q remove jre-1.7.0-openjdk"
     ssh "$node" "sudo yum -y -q install java-1.8.0-openjdk-devel"
 done
 for node in ${SERVERS}; do
-    ssh "$node" "sh ${DIR}/resolve-hostname.sh"
     ssh "$node" "sudo yum -y -q remove jre-1.7.0-openjdk"
     ssh "$node" "sudo yum -y -q install java-1.8.0-openjdk-devel"
 done

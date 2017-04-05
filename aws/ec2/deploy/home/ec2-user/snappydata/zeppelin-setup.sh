@@ -141,9 +141,9 @@ else
   # TODO If user has made any changes to the interpreter config, those may be lost.
   # Start and stop the Zeppelin daemon
   sh "${ZEP_DIR}/bin/zeppelin-daemon.sh" start
+   echo "Configuring Snappydata Interpreter..."
    while ! test -f  "${ZEP_DIR}/conf/interpreter.json" ; do
-      sleep 15
-      echo "Configuring Snappydata Interpreter..."
+      sleep 3
    done
   cp "${ZEP_DIR}/conf/interpreter.json" "${ZEP_DIR}/conf/interpreter.json.orig"
   sh "${ZEP_DIR}/bin/zeppelin-daemon.sh" stop
@@ -163,7 +163,7 @@ if [[ -e "${ZEP_DIR}/conf/interpreter.json" ]]; then
     LEAD_HOST=`cat lead_list | sed -n '1p'`
   fi
   sed -i "/group\": \"snappydata\"/,/isExistingProcess\": false/{s/isExistingProcess\": false/isExistingProcess\": snappydatainc_marker/}" "${ZEP_DIR}/conf/interpreter.json"
-  sed -i "/snappydatainc_marker/a \"host\": \"localhost\",\n \"port\": \"3768\"," "${ZEP_DIR}/conf/interpreter.json"
+  sed -i "/snappydatainc_marker/a \"host\": \"${LEAD_HOST}\",\n \"port\": \"3768\"," "${ZEP_DIR}/conf/interpreter.json"
   sed -i "s/snappydatainc_marker/true/" "${ZEP_DIR}/conf/interpreter.json"
 fi
 
