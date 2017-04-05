@@ -193,7 +193,7 @@ $ docker-compose ps
  SnappyData version 0.8
  snappy>
  ```
-  Note: If you want to connect to SnappyData with DB client tools like dbSchema, DBVisualizer or Squirrel SQL client,  the jar **snappydata-store-client-1.5.0.jar** file available on the official [SnappyData Release page](#https://github.com/SnappyDataInc/snappydata/releases). Refer to the documentation provided by your client tool for instructions on how to make a JDBC connection.
+  Note: If you want to connect to SnappyData with DB client tools like dbSchema, DBVisualizer or Squirrel SQL client,  the jar **snappydata-store-client-1.5.4.jar** file available on the official [SnappyData Release page](#https://github.com/SnappyDataInc/snappydata/releases). Refer to the documentation provided by your client tool for instructions on how to make a JDBC connection.
  
 6. **Make a JDBC connection**
 
@@ -304,7 +304,7 @@ Using Docker Cloud, connect to a cloud hosting provider of your choice. Currentl
  SnappyData version 0.8
  snappy>
  ```
-  Note: You can also connect to SnappyData with DB client tools like dbSchema, DBVisualizer or Squirrel SQL client using the **snappydata-store-client-1.5.0.jar** file available on the official [SnappyData Release page](#https://github.com/SnappyDataInc/snappydata/releases). Refer to the documentation provided by your client tool for instructions on how to make a JDBC connection.
+  Note: You can also connect to SnappyData with DB client tools like dbSchema, DBVisualizer or Squirrel SQL client using the **snappydata-store-client-1.5.4.jar** file available on the official [SnappyData Release page](#https://github.com/SnappyDataInc/snappydata/releases). Refer to the documentation provided by your client tool for instructions on how to make a JDBC connection.
  
 5. **Make a JDBC connection**
 

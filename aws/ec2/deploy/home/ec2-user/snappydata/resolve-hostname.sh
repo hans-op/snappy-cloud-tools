@@ -14,7 +14,7 @@
 #     exit 0
 # fi
 
-#PRIVATE_IP=`wget -q -O - http://169.254.169.254/latest/meta-data/local-ipv4`
+PRIVATE_IP=`wget -q -O - http://169.254.169.254/latest/meta-data/local-ipv4`
 
 PUBLIC_HOSTNAME=`wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname`
 

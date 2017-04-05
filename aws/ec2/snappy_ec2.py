@@ -306,8 +306,8 @@ def parse_args():
                     sys.exit(1)
 
     if opts.with_zeppelin is not None:
-       print("Option --with-zeppelin specified. The latest SnappyData version will be used.")
-       opts.snappydata_version = "LATEST"
+        print("Option --with-zeppelin specified. The latest SnappyData version will be used.")
+        opts.snappydata_version = "LATEST"
 
     return (opts, action, cluster_name)
 

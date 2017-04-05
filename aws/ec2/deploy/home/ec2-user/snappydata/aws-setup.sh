@@ -66,8 +66,8 @@ if [[ "${ZEPPELIN_HOST}" != "zeppelin_server" ]]; then
 
   # Add interpreter jar to snappydata's jars directory
   # TODO Download this from official-github-release. See fetch-distribution.sh:getLatestUrl() on how we can get the latest url.
-  INTERPRETER_JAR="snappydata-zeppelin-0.7.0.jar"
-  INTERPRETER_URL="https://github.com/SnappyDataInc/zeppelin-interpreter/releases/download/v0.7.0/${INTERPRETER_JAR}"
+  INTERPRETER_JAR="snappydata-zeppelin-0.7.1.jar"
+  INTERPRETER_URL="https://github.com/SnappyDataInc/zeppelin-interpreter/releases/download/v0.7.1/${INTERPRETER_JAR}"
   wget -q "${INTERPRETER_URL}"
   mv ${INTERPRETER_JAR} ${SNAPPY_HOME_DIR}/jars/
 fi
@@ -92,7 +92,7 @@ sh copy-dir.sh "${SNAPPY_HOME_DIR}"  lead_list
 
 sh copy-dir.sh "${SNAPPY_HOME_DIR}"  server_list
 
-DIR=`readlink -f resolve-hostname.sh`
+DIR=`readlink -f zeppelin-setup.sh`
 DIR=`echo "$DIR"|sed 's@/$@@'`
 DIR=`dirname "$DIR"`
 
