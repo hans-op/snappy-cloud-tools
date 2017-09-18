@@ -244,7 +244,7 @@ def parse_args():
         "-u", "--user", default="ec2-user",
         help="The SSH user you want to connect as (default: %default)")
     parser.add_option(
-        "--delete-groups", action="store_true", default=False,
+        "--delete-groups", action="store_true", default=True,
         help="When destroying a cluster, delete the security groups that were created")
     parser.add_option(
         "--use-existing-locator", action="store_true", default=False,
@@ -1528,7 +1528,7 @@ def real_main():
                 zp = lead
             url = "http://%s:8080" % zp
             print("  Access Apache Zeppelin server at %s (launching it in your browser window)." % url)
-            time.sleep(2)
+            time.sleep(5)
             webbrowser.open_new_tab(url)
 
     elif action == "destroy":

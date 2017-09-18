@@ -21,7 +21,9 @@ pushd /home/ec2-user/snappydata > /dev/null
 
 source ec2-variables.sh
 sudo yum -y -q remove  jre-1.7.0-openjdk
+# TODO Install Oracle jdk
 sudo yum -y -q install java-1.8.0-openjdk-devel
+
 
 # Download and extract the appropriate distribution.
 sh fetch-distribution.sh
@@ -49,7 +51,7 @@ else
 fi
 
 # Enable jmx-manager for pulse to start
-sed -i '/^#/ ! {/\\$/ ! { /^[[:space:]]*$/ ! s/$/ -jmx-manager=true -jmx-manager-start=true/}}' "${SNAPPY_HOME_DIR}/conf/locators"
+# sed -i '/^#/ ! {/\\$/ ! { /^[[:space:]]*$/ ! s/$/ -jmx-manager=true -jmx-manager-start=true/}}' "${SNAPPY_HOME_DIR}/conf/locators"
 # Configure hostname-for-clients
 sed -i '/^#/ ! {/\\$/ ! { /^[[:space:]]*$/ ! s/\([^ ]*\)\(.*\)$/\1\2 -J-Dgemfirexd.hostname-for-clients=\1/}}' "${SNAPPY_HOME_DIR}/conf/locators"
 
@@ -61,15 +63,18 @@ else
 fi
 
 if [[ "${ZEPPELIN_HOST}" != "zeppelin_server" ]]; then
-  # Enable interpreter on lead
-  sed -i '/^#/ ! {/\\$/ ! { /^[[:space:]]*$/ ! s/$/ -zeppelin.interpreter.enable=true/}}' "${SNAPPY_HOME_DIR}/conf/leads"
-
   # Add interpreter jar to snappydata's jars directory
   # TODO Download this from official-github-release. See fetch-distribution.sh:getLatestUrl() on how we can get the latest url.
   INTERPRETER_JAR="snappydata-zeppelin-0.7.1.jar"
   INTERPRETER_URL="https://github.com/SnappyDataInc/zeppelin-interpreter/releases/download/v0.7.1/${INTERPRETER_JAR}"
   wget -q "${INTERPRETER_URL}"
-  mv ${INTERPRETER_JAR} ${SNAPPY_HOME_DIR}/jars/
+  mv ${INTERPRETER_JAR} ${SNAPPY_HOME_DIR}/
+
+  # Enable interpreter on lead
+  echo `readlink -f "${SNAPPY_HOME_DIR}/${INTERPRETER_JAR}"` > interpreter-jar-path.txt
+  sed -i 's/\//\\\//g' interpreter-jar-path.txt
+  ESCAPED_INTERPRETER_JAR_PATH=`cat interpreter-jar-path.txt`
+  sed -i "/^#/ ! {/\\$/ ! { /^[[:space:]]*$/ ! s/$/ -zeppelin.interpreter.enable=true -classpath=${ESCAPED_INTERPRETER_JAR_PATH} /}}" "${SNAPPY_HOME_DIR}/conf/leads"
 fi
 
 if [[ -e servers ]]; then
@@ -81,6 +86,11 @@ fi
 # Configure hostname-for-clients
 sed -i '/^#/ ! {/\\$/ ! { /^[[:space:]]*$/ ! s/\([^ ]*\)\(.*\)$/\1\2 -J-Dgemfirexd.hostname-for-clients=\1/}}' "${SNAPPY_HOME_DIR}/conf/servers"
 
+# Download aws jars into jars/ directory
+wget -q https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.3/hadoop-aws-2.7.3.jar
+wget -q https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar
+mv hadoop-aws-2.7.3.jar "${SNAPPY_HOME_DIR}/jars/"
+mv aws-java-sdk-1.7.4.jar "${SNAPPY_HOME_DIR}/jars/"
 
 OTHER_LOCATORS=`cat locator_list | sed '1d'`
 echo "$OTHER_LOCATORS" > other-locators

@@ -37,9 +37,11 @@ FIRST_LOCATOR=`cat locator_list | sed -n '1p'`
 echo "${LEADS}" > lead_list
 FIRST_LEAD=`cat lead_list | sed -n '1p'`
 
-ZEP_DIR="zeppelin-0.7.0-bin-netinst"
-# ZEP_URL="http://mirror.fibergrid.in/apache/zeppelin/zeppelin-0.7.0/${ZEP_DIR}.tgz"
-ZEP_URL_MIRROR="http://redrockdigimark.com/apachemirror/zeppelin/zeppelin-0.7.0/${ZEP_DIR}.tgz"
+ZEP_VERSION=0.7.2
+INTERPRETER_VERSION=0.7.1
+ZEP_DIR="zeppelin-${ZEP_VERSION}-bin-netinst"
+ZEP_URL_APACHE="http://archive.apache.org/dist/zeppelin/zeppelin-${ZEP_VERSION}/${ZEP_DIR}.tgz"
+ZEP_URL_MIRROR="http://redrockdigimark.com/apachemirror/zeppelin/zeppelin-${ZEP_VERSION}/${ZEP_DIR}.tgz"
 ZEP_NOTEBOOKS_URL="https://github.com/SnappyDataInc/zeppelin-interpreter/raw/notes/examples/notebook"
 ZEP_NOTEBOOKS_DIR="notebook"
 
@@ -78,8 +80,8 @@ fi
 
 # Download, extract and place SnappyData interpreter under interpreter/ directory
 # TODO See fetch-distribution.sh:getLatestUrl() on how we can get the latest url.
-INTERPRETER_JAR="snappydata-zeppelin-0.7.1.jar"
-INTERPRETER_URL="https://github.com/SnappyDataInc/zeppelin-interpreter/releases/download/v0.7.1/${INTERPRETER_JAR}"
+INTERPRETER_JAR="snappydata-zeppelin-${INTERPRETER_VERSION}.jar"
+INTERPRETER_URL="https://github.com/SnappyDataInc/zeppelin-interpreter/releases/download/v${INTERPRETER_VERSION}/${INTERPRETER_JAR}"
 INTERPRETER_DIR="${ZEP_DIR}/interpreter/snappydata"
 
 if [[ ! -d ${INTERPRETER_DIR} ]] || [[ ! -e interpreter-setting.json.orig ]]; then
