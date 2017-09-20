@@ -57,9 +57,12 @@ fi
 
 # Configure snappydata cluster
 printf "localhost -client-bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} \n"  > ${SNAPPYDATA_DIR}/conf/locators
-printf "localhost -locators=localhost:10334 -client-bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} -client-port=1528 ${HEAP_SIZE}\n" > ${SNAPPYDATA_DIR}/conf/servers
-printf "localhost -locators=localhost:10334 -zeppelin.interpreter.enable=true \n" > ${SNAPPYDATA_DIR}/conf/leads
+printf "localhost -locators=localhost:10334 -client-bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" > ${SNAPPYDATA_DIR}/conf/servers
+printf "localhost -locators=localhost:10334 -client-bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" >> ${SNAPPYDATA_DIR}/conf/servers
+printf "localhost -locators=localhost:10334 -zeppelin.interpreter.enable=true -classpath=${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} \n" > ${SNAPPYDATA_DIR}/conf/leads
 printf "# `date` Configured SnappyData cluster $?\n" >> status.log
+
+# Assumes that aws jars are available in snappydata classpath. Else download them.
 
 # Download interpreter jar and copy the relevant jars where needed.
 if [[ ! -e ${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} ]]; then
@@ -75,8 +78,8 @@ if [[ ! -e ${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} ]]; then
   mv ${INTERPRETER_JAR_NAME} ${SNAPPY_INTERPRETER_DIR}/
   printf "# `date` Moved interpreter jar to its dir $?\n" >> status.log
 
-  ln -s ${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} ${SNAPPYDATA_DIR}/jars/
-  printf "# `date` Created symlink for interpreter jar in SnappyData jars dir $?\n" >> status.log
+  # ln -s ${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} ${SNAPPYDATA_DIR}/jars/
+  # printf "# `date` Created symlink for interpreter jar in SnappyData jars dir $?\n" >> status.log
 fi
 
 # Start the single node snappydata cluster
@@ -85,14 +88,14 @@ RUNNING=`grep -ic running cluster-status.log`
 
 printf "# `date` Started SnappyData cluster, running ${RUNNING}\n" >> status.log
 
-if [[ ${RUNNING} -ne 3 ]]; then
+if [[ ${RUNNING} -ne 4 ]]; then
   exit 1
 fi
 
 # Set default homescreen page in Apache Zeppelin
-# sed -i "/<name>zeppelin.notebook.homescreen<\/name>/{n;s/<value>/<value>${HOMESCREEN}/}" ${ZEPPELIN_DIR}/conf/zeppelin-site.xml
+sed -i "/<name>zeppelin.notebook.homescreen<\/name>/{n;s/<value>/<value>${HOMESCREEN}/}" ${ZEPPELIN_DIR}/conf/zeppelin-site.xml
 # A bug in 0.9 AMI 
-sed -i "/<name>zeppelin.notebook.homescreen<\/name>/{n;s/<value>snappydatasnappydata/<value>${HOMESCREEN}/}" ${ZEPPELIN_DIR}/conf/zeppelin-site.xml
+# sed -i "/<name>zeppelin.notebook.homescreen<\/name>/{n;s/<value>snappydatasnappydata/<value>${HOMESCREEN}/}" ${ZEPPELIN_DIR}/conf/zeppelin-site.xml
 
 # Start Apache Zeppelin server
 bash ${ZEPPELIN_DIR}/bin/zeppelin-daemon.sh start
