@@ -56,9 +56,9 @@ else
 fi
 
 # Configure snappydata cluster
-printf "localhost -client-bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} \n"  > ${SNAPPYDATA_DIR}/conf/locators
-printf "localhost -locators=localhost:10334 -client-bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" > ${SNAPPYDATA_DIR}/conf/servers
-printf "localhost -locators=localhost:10334 -client-bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" >> ${SNAPPYDATA_DIR}/conf/servers
+printf "localhost -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} \n"  > ${SNAPPYDATA_DIR}/conf/locators
+printf "localhost -locators=localhost:10334 -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" > ${SNAPPYDATA_DIR}/conf/servers
+printf "localhost -locators=localhost:10334 -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" >> ${SNAPPYDATA_DIR}/conf/servers
 printf "localhost -locators=localhost:10334 -zeppelin.interpreter.enable=true -classpath=${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} \n" > ${SNAPPYDATA_DIR}/conf/leads
 printf "# `date` Configured SnappyData cluster $?\n" >> status.log
 
