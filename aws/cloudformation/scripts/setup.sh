@@ -56,10 +56,10 @@ else
 fi
 
 # Configure snappydata cluster
-printf "localhost -bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} \n"  > ${SNAPPYDATA_DIR}/conf/locators
-printf "localhost -locators=localhost:10334 -bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" > ${SNAPPYDATA_DIR}/conf/servers
-printf "localhost -locators=localhost:10334 -bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" >> ${SNAPPYDATA_DIR}/conf/servers
-printf "localhost -locators=localhost:10334 -zeppelin.interpreter.enable=true -classpath=${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} \n" > ${SNAPPYDATA_DIR}/conf/leads
+printf "${PUBLIC_HOSTNAME} -bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} \n"  > ${SNAPPYDATA_DIR}/conf/locators
+printf "${PUBLIC_HOSTNAME} -locators=localhost:10334 -bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" > ${SNAPPYDATA_DIR}/conf/servers
+printf "${PUBLIC_HOSTNAME} -locators=localhost:10334 -bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" >> ${SNAPPYDATA_DIR}/conf/servers
+printf "${PUBLIC_HOSTNAME} -locators=localhost:10334 -zeppelin.interpreter.enable=true -classpath=${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} \n" > ${SNAPPYDATA_DIR}/conf/leads
 printf "# `date` Configured SnappyData cluster $?\n" >> status.log
 
 # Assumes that aws jars are available in snappydata jars/ directory in the AMI. Else download them.
