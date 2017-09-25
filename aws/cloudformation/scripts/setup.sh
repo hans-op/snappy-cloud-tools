@@ -56,13 +56,13 @@ else
 fi
 
 # Configure snappydata cluster
-printf "localhost -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} \n"  > ${SNAPPYDATA_DIR}/conf/locators
-printf "localhost -locators=localhost:10334 -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" > ${SNAPPYDATA_DIR}/conf/servers
-printf "localhost -locators=localhost:10334 -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" >> ${SNAPPYDATA_DIR}/conf/servers
+printf "localhost -bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} \n"  > ${SNAPPYDATA_DIR}/conf/locators
+printf "localhost -locators=localhost:10334 -bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" > ${SNAPPYDATA_DIR}/conf/servers
+printf "localhost -locators=localhost:10334 -bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" >> ${SNAPPYDATA_DIR}/conf/servers
 printf "localhost -locators=localhost:10334 -zeppelin.interpreter.enable=true -classpath=${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} \n" > ${SNAPPYDATA_DIR}/conf/leads
 printf "# `date` Configured SnappyData cluster $?\n" >> status.log
 
-# Assumes that aws jars are available in snappydata classpath. Else download them.
+# TODO Assumes that aws jars are available in snappydata classpath. Else download them.
 
 # Download interpreter jar and copy the relevant jars where needed.
 if [[ ! -e ${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} ]]; then
