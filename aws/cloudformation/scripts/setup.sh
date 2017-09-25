@@ -62,7 +62,7 @@ printf "localhost -locators=localhost:10334 -bind-address=${PUBLIC_HOSTNAME} -J-
 printf "localhost -locators=localhost:10334 -zeppelin.interpreter.enable=true -classpath=${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} \n" > ${SNAPPYDATA_DIR}/conf/leads
 printf "# `date` Configured SnappyData cluster $?\n" >> status.log
 
-# TODO Assumes that aws jars are available in snappydata classpath. Else download them.
+# Assumes that aws jars are available in snappydata jars/ directory in the AMI. Else download them.
 
 # Download interpreter jar and copy the relevant jars where needed.
 if [[ ! -e ${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} ]]; then
@@ -81,6 +81,9 @@ if [[ ! -e ${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} ]]; then
   # ln -s ${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} ${SNAPPYDATA_DIR}/jars/
   # printf "# `date` Created symlink for interpreter jar in SnappyData jars dir $?\n" >> status.log
 fi
+
+# Set SPARK_DNS_HOST to public hostname so that SnappyData Pulse UI links work fine.
+echo "SPARK_PUBLIC_DNS=${PUBLIC_HOSTNAME}" >> ${SNAPPYDATA_DIR}/conf/spark-env.sh
 
 # Start the single node snappydata cluster
 bash ${SNAPPYDATA_DIR}/sbin/snappy-start-all.sh > cluster-status.log

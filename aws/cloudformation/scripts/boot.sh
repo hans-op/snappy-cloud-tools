@@ -11,7 +11,7 @@ cd ${DOWNLOADS_DIR}
 
 printf "\n# `date` START -------------------------------------------------- #\n" >> status.log
 
-yum -y update
+sudo yum -y update
 # Install CloudFormation helper scripts
 #which cfn-signal
 #if [[ $? -ne 0 ]]; then
