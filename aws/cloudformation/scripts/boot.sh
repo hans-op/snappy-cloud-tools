@@ -29,8 +29,8 @@ export NOTEBOOK_URL="https://github.com/SnappyDataInc/zeppelin-interpreter/raw/n
 export CF_SCRIPT_URL="https://raw.githubusercontent.com/SnappyDataInc/snappy-cloud-tools/test-01/aws/cloudformation/scripts/setup.sh"
 printf "# `date` Updated urls $?\n" >> status.log
 
-rm setup.sh
-wget ${CF_SCRIPT_URL}
+rm -f setup.sh
+wget -q ${CF_SCRIPT_URL}
 printf "# `date` Downloaded cloudformation setup script $?\n" >> status.log
 
 bash setup.sh
