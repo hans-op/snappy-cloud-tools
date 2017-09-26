@@ -49,17 +49,27 @@ find ${ZEPPELIN_DIR}/notebook -type f -print0 | xargs -0 sed -i "s/localhost/${P
 INST_TYPE=`curl http://169.254.169.254/latest/meta-data/instance-type`
 HEAP_VALUE=`grep ${INST_TYPE} server-memory.txt | grep -o "[0-9]*$"`
 
-if [[ $? -ne 0 ]]; then
-  HEAP_SIZE=""
+# Calculate heap and off-heap sizes.
+# Set heap to be 8GB or 1/4th of considered memory, whichever is higher. Remaining for off-heap.
+MYRAM=`free -gt | grep Total | awk '{print $2}'`
+AVAIL=`echo $MYRAM \* 0.9 / 1 | bc`
+HEAP=`echo $AVAIL \* 0.25 / 1 | bc`
+HEAP=$(($HEAP < 8 ? 8 : $HEAP))
+OFFHEAP=`echo $AVAIL - $HEAP | bc`
+echo "RAM: $MYRAM, considered: $AVAIL, heap: $HEAP, off-heap: $OFFHEAP" >> memory-breakup.txt
+HEAPSTR=" -heap-size=${HEAP}g "
+
+if [[ $OFFHEAP -le 0 ]]; then
+  OFFHEAPSTR=""
 else
-  HEAP_SIZE="-heap-size=${HEAP_VALUE}g"
+  OFFHEAPSTR=" -memory-size=${OFFHEAP}g "
 fi
 
 # Configure snappydata cluster
 printf "${PUBLIC_HOSTNAME} -bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} \n"  > ${SNAPPYDATA_DIR}/conf/locators
-printf "${PUBLIC_HOSTNAME} -locators=localhost:10334 -bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" > ${SNAPPYDATA_DIR}/conf/servers
-printf "${PUBLIC_HOSTNAME} -locators=localhost:10334 -bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAP_SIZE}\n" >> ${SNAPPYDATA_DIR}/conf/servers
-printf "${PUBLIC_HOSTNAME} -locators=localhost:10334 -zeppelin.interpreter.enable=true -classpath=${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} \n" > ${SNAPPYDATA_DIR}/conf/leads
+printf "${PUBLIC_HOSTNAME} -locators=localhost:10334 -bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAPSTR} ${OFFHEAPSTR} \n" > ${SNAPPYDATA_DIR}/conf/servers
+printf "${PUBLIC_HOSTNAME} -locators=localhost:10334 -bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAPSTR} ${OFFHEAPSTR} \n" >> ${SNAPPYDATA_DIR}/conf/servers
+printf "${PUBLIC_HOSTNAME} -locators=localhost:10334 -zeppelin.interpreter.enable=true -classpath=${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} ${HEAPSTR} ${OFFHEAPSTR} \n" > ${SNAPPYDATA_DIR}/conf/leads
 printf "# `date` Configured SnappyData cluster $?\n" >> status.log
 
 # Assumes that aws jars are available in snappydata jars/ directory in the AMI. Else download them.
