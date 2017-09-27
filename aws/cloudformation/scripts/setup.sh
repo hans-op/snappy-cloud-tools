@@ -15,6 +15,7 @@ printf "# `date` SnappyData interpreter name ${INTERPRETER_JAR_NAME} $?\n" >> st
 SNAPPY_INTERPRETER_DIR=${ZEPPELIN_DIR}/interpreter/snappydata
 
 PUBLIC_HOSTNAME=`wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname`
+PRIVATE_IP=`wget -q -O - http://169.254.169.254/latest/meta-data/local-ipv4`
 
 # Generate ssh keys for passwordless-ssh
 mkdir -p ~/.ssh
@@ -66,10 +67,10 @@ else
 fi
 
 # Configure snappydata cluster
-printf "localhost -client-bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} \n"  > ${SNAPPYDATA_DIR}/conf/locators
-printf "localhost -locators=localhost:10334 -client-bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAPSTR} ${OFFHEAPSTR} \n" > ${SNAPPYDATA_DIR}/conf/servers
-printf "localhost -locators=localhost:10334 -client-bind-address=${PUBLIC_HOSTNAME} -J-Dgemfirexd.hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAPSTR} ${OFFHEAPSTR} \n" >> ${SNAPPYDATA_DIR}/conf/servers
-printf "localhost -locators=localhost:10334 -zeppelin.interpreter.enable=true -classpath=${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} ${HEAPSTR} ${OFFHEAPSTR} \n" > ${SNAPPYDATA_DIR}/conf/leads
+printf "${PRIVATE_IP} -client-bind-address=${PRIVATE_IP} -hostname-for-clients=${PUBLIC_HOSTNAME} \n"  > ${SNAPPYDATA_DIR}/conf/locators
+printf "${PRIVATE_IP} -locators=${PRIVATE_IP}:10334 -client-bind-address=${PRIVATE_IP} -hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAPSTR} ${OFFHEAPSTR} \n" > ${SNAPPYDATA_DIR}/conf/servers
+printf "${PRIVATE_IP} -locators=${PRIVATE_IP}:10334 -client-bind-address=${PRIVATE_IP} -hostname-for-clients=${PUBLIC_HOSTNAME} ${HEAPSTR} ${OFFHEAPSTR} \n" >> ${SNAPPYDATA_DIR}/conf/servers
+printf "${PRIVATE_IP} -locators=${PRIVATE_IP}:10334 -zeppelin.interpreter.enable=true -classpath=${SNAPPY_INTERPRETER_DIR}/${INTERPRETER_JAR_NAME} ${HEAPSTR} ${OFFHEAPSTR} \n" > ${SNAPPYDATA_DIR}/conf/leads
 printf "# `date` Configured SnappyData cluster $?\n" >> status.log
 
 # Assumes that aws jars are available in snappydata jars/ directory in the AMI. Else download them.
