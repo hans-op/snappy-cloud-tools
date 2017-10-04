@@ -108,8 +108,6 @@ fi
 
 # Set default homescreen page in Apache Zeppelin
 sed -i "/<name>zeppelin.notebook.homescreen<\/name>/{n;s/<value>/<value>${HOMESCREEN}/}" ${ZEPPELIN_DIR}/conf/zeppelin-site.xml
-# A bug in 0.9 AMI 
-# sed -i "/<name>zeppelin.notebook.homescreen<\/name>/{n;s/<value>snappydatasnappydata/<value>${HOMESCREEN}/}" ${ZEPPELIN_DIR}/conf/zeppelin-site.xml
 
 # Start Apache Zeppelin server
 bash ${ZEPPELIN_DIR}/bin/zeppelin-daemon.sh start
