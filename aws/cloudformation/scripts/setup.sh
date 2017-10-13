@@ -46,10 +46,6 @@ mkdir -p ${ZEPPELIN_DIR}/notebook
 cp -R notebook/* ${ZEPPELIN_DIR}/notebook/
 find ${ZEPPELIN_DIR}/notebook -type f -print0 | xargs -0 sed -i "s/localhost/${PUBLIC_HOSTNAME}/g"
 
-# Set -Xmx for the server
-# INST_TYPE=`curl http://169.254.169.254/latest/meta-data/instance-type`
-# HEAP_VALUE=`grep ${INST_TYPE} server-memory.txt | grep -o "[0-9]*$"`
-
 # Calculate heap and off-heap sizes.
 # Set heap to be 8GB or 1/4th of considered memory, whichever is higher. Remaining for off-heap.
 MYRAM=`free -gt | grep Total | awk '{print $2}'`

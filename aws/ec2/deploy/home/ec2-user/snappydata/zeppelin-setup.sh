@@ -37,9 +37,11 @@ FIRST_LOCATOR=`cat locator_list | sed -n '1p'`
 echo "${LEADS}" > lead_list
 FIRST_LEAD=`cat lead_list | sed -n '1p'`
 
-ZEP_DIR="zeppelin-0.7.0-bin-netinst"
-# ZEP_URL="http://mirror.fibergrid.in/apache/zeppelin/zeppelin-0.7.0/${ZEP_DIR}.tgz"
-ZEP_URL_MIRROR="http://redrockdigimark.com/apachemirror/zeppelin/zeppelin-0.7.0/${ZEP_DIR}.tgz"
+ZEP_VERSION="0.7.3"
+INTERPRETER_VERSION="0.7.2"
+ZEP_DIR="zeppelin-${ZEP_VERSION}-bin-netinst"
+ZEP_URL_MIRROR="http://www-us.apache.org/dist/zeppelin/zeppelin-${ZEP_VERSION}/${ZEP_DIR}.tgz"
+ZEP_ALT_URL="http://www-eu.apache.org/dist/zeppelin/zeppelin-${ZEP_VERSION}/${ZEP_DIR}.tgz"
 ZEP_NOTEBOOKS_URL="https://github.com/SnappyDataInc/zeppelin-interpreter/raw/notes/examples/notebook"
 ZEP_NOTEBOOKS_DIR="notebook"
 
@@ -48,11 +50,11 @@ if [[ ! -d ${ZEP_DIR} ]]; then
   if [[ ! -e "${ZEP_DIR}.tgz" ]]; then
     echo "Downloading Apache Zeppelin distribution..."
     wget -q "${ZEP_URL_MIRROR}"
-    # Try the same mirror again. Zeppelin website has removed fibergrid mirror.
     # TODO while loop
     if [ $? -ne 0 ]; then
+      # Try different mirror.
       rm "${ZEP_DIR}.tgz"
-      wget -q "${ZEP_URL_MIRROR}"
+      wget -q "${ZEP_ALT_URL}"
     fi
     
   fi
@@ -78,8 +80,8 @@ fi
 
 # Download, extract and place SnappyData interpreter under interpreter/ directory
 # TODO See fetch-distribution.sh:getLatestUrl() on how we can get the latest url.
-INTERPRETER_JAR="snappydata-zeppelin-0.7.1.jar"
-INTERPRETER_URL="https://github.com/SnappyDataInc/zeppelin-interpreter/releases/download/v0.7.1/${INTERPRETER_JAR}"
+INTERPRETER_JAR="snappydata-zeppelin-${INTERPRETER_VERSION}.jar"
+INTERPRETER_URL="https://github.com/SnappyDataInc/zeppelin-interpreter/releases/download/v${INTERPRETER_VERSION}/${INTERPRETER_JAR}"
 INTERPRETER_DIR="${ZEP_DIR}/interpreter/snappydata"
 
 if [[ ! -d ${INTERPRETER_DIR} ]] || [[ ! -e interpreter-setting.json.orig ]]; then
@@ -158,10 +160,6 @@ fi
 if [[ -e "${ZEP_DIR}/conf/interpreter.json" ]]; then
   LEAD_HOST="localhost"
   LEAD_PORT="3768"
-  if [[ ${ZEPPELIN_MODE} != "EMBEDDED" ]]; then
-    echo "${LEADS}" > lead_list
-    LEAD_HOST=`cat lead_list | sed -n '1p'`
-  fi
   sed -i "/group\": \"snappydata\"/,/isExistingProcess\": false/{s/isExistingProcess\": false/isExistingProcess\": snappydatainc_marker/}" "${ZEP_DIR}/conf/interpreter.json"
   sed -i "/snappydatainc_marker/a \"host\": \"${LEAD_HOST}\",\n \"port\": \"${LEAD_PORT}\"," "${ZEP_DIR}/conf/interpreter.json"
   sed -i "s/snappydatainc_marker/true/" "${ZEP_DIR}/conf/interpreter.json"
@@ -169,6 +167,6 @@ fi
 
 sh "${ZEP_DIR}/bin/zeppelin-daemon.sh" start
 
-sleep 3
+# sleep 3
 
 popd > /dev/null
