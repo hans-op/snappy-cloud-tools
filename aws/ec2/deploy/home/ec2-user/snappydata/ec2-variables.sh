@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Changes for SnappyData data platform.
+#
+# Portions Copyright (c) 2017 SnappyData, Inc. All rights reserved.
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with

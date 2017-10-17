@@ -1,20 +1,19 @@
 #!/usr/bin/env bash
-
 #
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
+# Copyright (c) 2017 SnappyData, Inc. All rights reserved.
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you
+# may not use this file except in compliance with the License. You
+# may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License. See accompanying
+# LICENSE file.
 #
 
 # TODO Remove the hardcoding wherever possible.
@@ -44,6 +43,7 @@ ZEP_URL_MIRROR="http://www-us.apache.org/dist/zeppelin/zeppelin-${ZEP_VERSION}/$
 ZEP_ALT_URL="http://www-eu.apache.org/dist/zeppelin/zeppelin-${ZEP_VERSION}/${ZEP_DIR}.tgz"
 ZEP_NOTEBOOKS_URL="https://github.com/SnappyDataInc/zeppelin-interpreter/raw/notes/examples/notebook"
 ZEP_NOTEBOOKS_DIR="notebook"
+PUBLIC_HOSTNAME=`wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname`
 
 # Download and extract Zeppelin distribution
 if [[ ! -d ${ZEP_DIR} ]]; then
@@ -68,7 +68,7 @@ if [[ ! -e "${ZEP_NOTEBOOKS_DIR}.tar.gz" ]]; then
 fi
 tar -xzf "${ZEP_NOTEBOOKS_DIR}.tar.gz"
 
-find ${ZEP_NOTEBOOKS_DIR} -type f -print0 | xargs -0 sed -i "s/localhost:5050/${FIRST_LEAD}:5050/g"
+find ${ZEP_NOTEBOOKS_DIR} -type f -print0 | xargs -0 sed -i "s/localhost/${PUBLIC_HOSTNAME}/g"
 
 echo "Copying sample notebooks..."
 cp -ar "${ZEP_NOTEBOOKS_DIR}/." "${ZEP_DIR}/${ZEP_NOTEBOOKS_DIR}/"
@@ -79,7 +79,6 @@ if [[ ! -d ${SNAPPY_HOME_DIR} ]]; then
 fi
 
 # Download, extract and place SnappyData interpreter under interpreter/ directory
-# TODO See fetch-distribution.sh:getLatestUrl() on how we can get the latest url.
 INTERPRETER_JAR="snappydata-zeppelin-${INTERPRETER_VERSION}.jar"
 INTERPRETER_URL="https://github.com/SnappyDataInc/zeppelin-interpreter/releases/download/v${INTERPRETER_VERSION}/${INTERPRETER_JAR}"
 INTERPRETER_DIR="${ZEP_DIR}/interpreter/snappydata"

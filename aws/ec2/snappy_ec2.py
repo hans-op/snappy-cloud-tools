@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# Changes for SnappyData data platform.
+#
+# Portions Copyright (c) 2017 SnappyData, Inc. All rights reserved.
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -19,7 +22,7 @@
 # limitations under the License.
 #
 
-# This script is taken from 
+# This script was taken from
 # https://github.com/amplab/spark-ec2/blob/branch-1.6/spark_ec2.py
 # with modifications.
 
@@ -196,12 +199,12 @@ def parse_args():
         help="If you have multiple profiles (AWS or boto config), you can configure " +
              "additional, named profiles by using this option (default: %default)")
     parser.add_option(
-        "-t", "--instance-type", default="m3.large",
+        "-t", "--instance-type", default="m4.large",
         help="Type of instance to launch (default: %default). " +
              "WARNING: must be 64-bit; small instances won't work")
     parser.add_option(
-        "--locator-instance-type", default="",
-        help="Locator instance type (leave empty for same as instance-type)")
+        "--locator-instance-type", default="t2.medium",
+        help="Locator instance type (default: %default)")
     parser.add_option(
         "-r", "--region", default="us-east-1",
         help="EC2 region used to launch instances in, or to find them in (default: %default)")
@@ -1219,7 +1222,10 @@ def deploy_files(conn, root_dir, opts, locator_nodes, lead_nodes, server_nodes, 
                                 text = text.replace("{{LEAD_" + str(idx) + "}}", lead_addresses[idx])
                             for idx in range(len(server_nodes)):
                                 text = text.replace("{{SERVER_" + str(idx) + "}}", server_addresses[idx])
-                            text = text.replace("{{snappydata_version}}", "LATEST")
+                            if opts.enterprise:
+                                text = text.replace("{{snappydata_version}}", "ENT")
+                            else:
+                                text = text.replace("{{snappydata_version}}", "LATEST")
                             dest.write(text)
                             dest.close()
     # rsync the whole directory over to the locator instance

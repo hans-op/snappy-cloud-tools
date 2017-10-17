@@ -1,25 +1,36 @@
 #!/bin/bash
-
 #
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
+# Copyright (c) 2017 SnappyData, Inc. All rights reserved.
 #
-#    http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you
+# may not use this file except in compliance with the License. You
+# may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# permissions and limitations under the License. See accompanying
+# LICENSE file.
 #
 
 pushd /home/ec2-user/snappydata > /dev/null
 
 source ec2-variables.sh
+
+# Check if enterprise version to be used.
+if [[ "${SNAPPYDATA_VERSION}" = "ENT" ]]; then
+  echo "Setting up the cluster with SnappyData Enterprise edition ..."
+  wget -q "https://raw.githubusercontent.com/SnappyDataInc/snappy-cloud-tools/test-02/aws/ec2/deploy/home/ec2-user/snappydata/ent-aws-setup.sh"
+  sh ent-aws-setup.sh
+  ENT_SETUP=`echo $?`
+  rm -f ent-aws-setup.sh
+  popd > /dev/null
+  exit ${ENT_SETUP}
+fi
+
 sudo yum -y -q remove  jre-1.7.0-openjdk
 sudo yum -y -q install java-1.8.0-openjdk-devel
 
